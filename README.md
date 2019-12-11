@@ -93,7 +93,7 @@ AccountAnotherJob::dispatch($a2);Работают, например, десят�
 # Тестирование
 Добавьте в базу тестовые данные
 
-    php artisan db:seed
+    php artisan db:seed --class=B2Broker\\Seeds\\UsersTableSeeder
     
 Замените в файле `phpunit.xml` строчку
 
