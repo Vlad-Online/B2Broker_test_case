@@ -2,6 +2,7 @@
 
 namespace B2Broker\Laravel;
 
+use B2Broker\Interfaces\SingleModelInQueue;
 use B2Broker\Models\FunnelQueue;
 use B2Broker\Models\FunnelWorker;
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -46,12 +47,14 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         Queue::after(function (JobProcessed $event) {
             $payload    = $event->job->payload();
             $job        = unserialize($payload['data']['command']);
-            $modelClass = $job->getClassName();
-            $modelId    = $job->getModelId();
-            FunnelQueue::where([
-                'model_id'    => $modelId,
-                'model_class' => $modelClass
-            ])->delete();
+            if ($job instanceof SingleModelInQueue) {
+                $modelClass = $job->getClassName();
+                $modelId    = $job->getModelId();
+                FunnelQueue::where([
+                    'model_id'    => $modelId,
+                    'model_class' => $modelClass
+                ])->delete();
+            }
         });
     }
 }
